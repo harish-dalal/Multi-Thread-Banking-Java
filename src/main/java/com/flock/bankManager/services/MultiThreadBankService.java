@@ -17,25 +17,38 @@ public class MultiThreadBankService {
     private BankRepository bankRepository;
 
     @Autowired
-    private XSync<String> xSync;
+    private NotificationService notificationService;
+
+    @Autowired
+    private SemaphoreNotificationService semaphoreNotificationService;
+
 
     public MultiThreadBankService() {
-        priorityBasedExecutorService = new PriorityBasedExecutorService(4, 50);
+        priorityBasedExecutorService = new PriorityBasedExecutorService(1, 1);
     }
 
     public void updateName(UpdateReq updateReq) {
-        priorityBasedExecutorService.scheduleJob(new Task(() -> bankRepository.updateName(updateReq), 0));
+        bankRepository.updateName(updateReq);
+//        notificationService.newNotification(updateReq.getEmail().toString() , "update");
     }
 
     public void depositAmount(TransactionReq transactionReq) {
-        xSync.execute(transactionReq.getEmail(), () -> {
-            priorityBasedExecutorService.scheduleJob(new Task(() -> bankRepository.deposit(transactionReq), 1));
-        });
+        bankRepository.deposit(transactionReq);
+        notificationService.newNotification(transactionReq.getAmount());
+//        try {
+//            semaphoreNotificationService.addNotification(transactionReq.getAmount());
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
     }
 
     public void withdrawAmount(TransactionReq transactionReq) {
-        xSync.execute(transactionReq.getEmail(), () -> {
-            priorityBasedExecutorService.scheduleJob(new Task(() -> bankRepository.withdraw(transactionReq), 1));
-        });
+        bankRepository.withdraw(transactionReq);
+        notificationService.newNotification(transactionReq.getAmount());
+//        try {
+//            semaphoreNotificationService.addNotification(transactionReq.getAmount());
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
     }
 }

@@ -33,7 +33,7 @@ public class BankRepository {
         params.addValue(SQL_AMOUNT, transactionReq.getAmount());
         jdbcTemplate.update(SQL_DEPOSIT_AMT, params);
 
-        System.out.println("Money Deposited: " + transactionCount.incrementAndGet());
+//        System.out.println("Money Deposited: " + transactionCount.incrementAndGet());
     }
 
     public void withdraw(TransactionReq transactionReq) {
@@ -41,6 +41,6 @@ public class BankRepository {
         params.addValue(SQL_AMOUNT, transactionReq.getAmount());
         jdbcTemplate.update(SQL_WITHDRAW_AMT, params);
 
-        System.out.println("Money Withdrew: " + transactionCount.decrementAndGet());
+//        System.out.println("Money Withdrew: " + transactionCount.incrementAndGet());
     }
 }
